@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class SensorWebSocketHandler extends TextWebSocketHandler {
 
     private final Map<Long, List<WebSocketSession>> sessions = new ConcurrentHashMap<>();
-    private final List<WebSocketSession> sessionsList = new CopyOnWriteArrayList<>();
+    private final Map<Long, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
 
     @Override
@@ -27,9 +27,9 @@ public class SensorWebSocketHandler extends TextWebSocketHandler {
         log.info("Connected with {} id", sensorId);
 
         sessions.computeIfAbsent(sensorId, k -> new CopyOnWriteArrayList<>()).add(session);
-        sessionsList.add(session);
+        sessionMap.put(sensorId, session);
 
-        log.info("Current sessions: {}", sessions);
+        log.info("Current new sessions map: {}", sessionMap);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SensorWebSocketHandler extends TextWebSocketHandler {
     public void sendSensorData(Long sensorId, String data) throws IOException {
         List<WebSocketSession> sessionList = sessions.get(sensorId);
 
-        log.info("teste {}", sessionsList);
+        log.info("teste {}", sessionMap);
 
         log.info("All sessions: {}", sessions);
         log.info("Sessions to send data: {}", sessionList);
